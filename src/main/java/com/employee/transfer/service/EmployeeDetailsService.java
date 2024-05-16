@@ -14,4 +14,6 @@ public interface EmployeeDetailsService {
 		public Status updateEmployee(UpdateUserRequest request) throws Exception;
 
 		public Status deleteEmployees(Set<Integer> request) throws Exception;
+
+		public Status createEmployee(EmployeeDetailsDTO request) throws Exception;;
 }

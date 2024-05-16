@@ -37,6 +37,12 @@ public class EmployeeDetailsServiceImpl implements EmployeeDetailsService{
 	@Value("${delete.Employees}")
 	private String deleteEmployeesQuery;
 	
+	@Value("${create.Employee}")
+	private String createEmployeeQuery;
+	
+	@Value("${create.department}")
+	private String createDepartmentQuery;
+	
 	
 	@Override
 	public List<EmployeeDetailsDTO> getEmployeeDetails() throws Exception {
@@ -113,5 +119,44 @@ public class EmployeeDetailsServiceImpl implements EmployeeDetailsService{
 				return Status.FAILURE;
 		}
 		return Status.SUCCESS;
+	}
+
+	@Override
+	public Status createEmployee(EmployeeDetailsDTO request) throws Exception {
+		
+		int rowsCreated= jdbcTemplate.update(createEmployeeQuery, new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setString(1, request.getName());
+				ps.setString(2, request.getJob_name());
+				ps.setInt(3, request.getManager_id());
+				ps.setDate(4, request.getHire_date());
+				ps.setDouble(5, request.getSalary());
+				ps.setDouble(6, request.getCommission());
+				ps.setInt(7, request.getDep_id());
+				
+				
+			}
+			
+		});
+		int depRowsCreated=0;
+		if(rowsCreated >0) {
+		
+		depRowsCreated= jdbcTemplate.update(createDepartmentQuery, new PreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				ps.setInt(1, request.getDep_id());
+				ps.setString(2, request.getDepartment_name());
+				ps.setString(3, request.getLocation());
+				
+			}
+			
+		   });
+		}
+		
+		
+		return (depRowsCreated > 0) ? Status.SUCCESS : Status.FAILURE;
 	}
 }
