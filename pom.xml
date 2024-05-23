@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.employeeTransfers</groupId>
 	<artifactId>employeeTransfers</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>war</packaging>
 	<name>EmployeeTransfers</name>
 	<description>Spring Boot Project for EmployeeTransfers in the organization</description>
@@ -62,7 +62,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>employeeTransfers-0.0.1-SNAPSHOT</finalName>
+		<finalName>employeeTransfers-0.0.1</finalName>
 	</build>
 
 </project>
