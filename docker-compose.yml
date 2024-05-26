@@ -1,12 +1,12 @@
 version: '3.1'
 services:
   app:
-    image: 'employee-transfers-0.0.1:latest'
+    image: 'employee-transfers-0.0.1'
     build: ./
     depends_on:
        - postgres15
     ports:
-        - 8089:8089
+        - 8080:8080
 
   postgres15:
         image: postgres
