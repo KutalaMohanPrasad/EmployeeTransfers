@@ -33,8 +33,8 @@ public class EmployeeDetailsController {
 	@GetMapping("/getAllEmployeeDetails")
 	public ResponseEntity<EmployeeTransferResponse> getEmployeeDetails() throws Exception {
 		List<EmployeeDetailsDTO> employeeList= employeeDetailsService.getEmployeeDetails();
-		Header header = Header.builder().timestamp(new Date().toString()).status("SUCCESS").build();
-		EmployeeTransferResponse response = EmployeeTransferResponse.builder().header(header).response(employeeList).build();
+		Header header = new Header(new java.util.Date().toString(), "SUCCESS", null, null);
+		EmployeeTransferResponse response = new EmployeeTransferResponse(header, employeeList);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -47,8 +47,8 @@ public class EmployeeDetailsController {
 		} else {
 			status = employeeDetailsService.updateEmployee(request);
 		}
-		Header header = Header.builder().timestamp(new Date().toString()).status("SUCCESS").build();
-		EmployeeTransferResponse response = EmployeeTransferResponse.builder().header(header).response(status).build();
+		Header header = new Header(new java.util.Date().toString(), "SUCCESS", null, null);
+		EmployeeTransferResponse response = new EmployeeTransferResponse(header, status);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -60,8 +60,8 @@ public class EmployeeDetailsController {
 		} else {
 			status = employeeDetailsService.deleteEmployees(request);
 		}
-		Header header = Header.builder().timestamp(new Date().toString()).status("SUCCESS").build();
-		EmployeeTransferResponse response = EmployeeTransferResponse.builder().header(header).response(status).build();
+		Header header = new Header(new java.util.Date().toString(), "SUCCESS", null, null);
+		EmployeeTransferResponse response = new EmployeeTransferResponse(header, status);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 	
@@ -73,8 +73,8 @@ public class EmployeeDetailsController {
 		} else {
 			status = employeeDetailsService.createEmployee(request);
 		}
-		Header header = Header.builder().timestamp(new Date().toString()).status("SUCCESS").build();
-		EmployeeTransferResponse response = EmployeeTransferResponse.builder().header(header).response(status).build();
+		Header header = new Header(new java.util.Date().toString(), "SUCCESS", null, null);
+		EmployeeTransferResponse response = new EmployeeTransferResponse(header, status);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
