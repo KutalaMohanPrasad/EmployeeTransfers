@@ -4,13 +4,13 @@ services:
     image: 'employee-transfers-0.0.1'
     build: ./
     depends_on:
-       - postgres15
+       - postgres17
     ports:
         - 8080:8080
 
-  postgres15:
-        image: postgres
-        container_name: postgres15
+  postgres17:
+        image: postgres:17
+        container_name: postgres17
         ports:
           - "5432:5432"
         environment:
