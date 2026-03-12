@@ -1,29 +1,38 @@
-DROP TABLE IF EXISTS employees;
+-- Create tables inside employee_db database
+-- Note: When used with Docker/Kubernetes, the database is already created by POSTGRES_DB environment variable
+
+-- Drop existing tables if they exist (in reverse dependency order)
+DROP TABLE IF EXISTS employees CASCADE;
+DROP TABLE IF EXISTS department CASCADE;
+
+-- Create department table first (referenced by employees)
+CREATE TABLE department (
+  deptno INTEGER PRIMARY KEY,
+  dname VARCHAR(14),
+  loc VARCHAR(13)
+);
+
+-- Create employees table with proper constraints
 CREATE TABLE employees (
     emp_id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
-    job_name VARCHAR(50),
-    manager_id INT,
-    hire_date DATE,
-    salary DECIMAL(10, 2),
+    name VARCHAR(50) NOT NULL,
+    job_name VARCHAR(50) NOT NULL,
+    manager_id INTEGER,
+    hire_date DATE NOT NULL,
+    salary DECIMAL(10, 2) NOT NULL,
     commission DECIMAL(10, 2),
-    dep_id INT
-);
-DROP TABLE IF EXISTS department;
-CREATE TABLE department (
-  deptno decimal(2,0) default NULL,
-  dname varchar(14) default NULL,
-  loc varchar(13) default NULL
+    dep_id INTEGER NOT NULL,
+    CONSTRAINT fk_department FOREIGN KEY (dep_id) REFERENCES department(deptno)
 );
 
+-- Insert department data FIRST (before employees due to foreign key constraint)
+INSERT INTO department (deptno, dname, loc) VALUES
+    (1, 'ACCOUNTING', 'NEW YORK'),
+    (2, 'RESEARCH', 'DALLAS'),
+    (3, 'SALES', 'CHICAGO'),
+    (4, 'OPERATIONS', 'BOSTON');
 
-
-
-
-
----inserts
-
-
+-- Insert employee data
 INSERT INTO employees (name, job_name, manager_id, hire_date, salary, commission, dep_id)
 VALUES
     ('John Doe', 'Manager', NULL, '2022-01-01', 80000.00, 1000.00, 1),
@@ -43,14 +52,11 @@ VALUES
     ('Ethan Johnson', 'Salesperson', 12, '2020-04-01', 60000.00, 1000.00, 4),
     ('Ava Lee', 'Salesperson', 12, '2020-05-01', 60000.00, 1000.00, 4);
 
-INSERT INTO department VALUES ('1','ACCOUNTING','NEW YORK');
-INSERT INTO department VALUES ('2','RESEARCH','DALLAS');
-INSERT INTO department VALUES ('3','SALES','CHICAGO');
-INSERT INTO department VALUES ('4','OPERATIONS','BOSTON');
+-- Verify data was inserted successfully
+SELECT COUNT(*) as total_employees FROM employees;
+SELECT COUNT(*) as total_departments FROM department;
 
--- practice queries
 
-SELECT * FROM employees;
+SELECT * FROM employees
 
-DELETE FROM employees
-WHERE emp_id = 17;
+INSERT INTO department (deptno,dname,loc) VALUES (10,'Research','canada')

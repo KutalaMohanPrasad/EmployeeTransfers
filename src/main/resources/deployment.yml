@@ -2,8 +2,9 @@ kind: Service
 apiVersion: v1
 metadata:
   name: employeetransfers-postgres-k8s
+  namespace: default
   labels:
-    name: employeetransfers-postgres-k8s
+    app: employeetransfers-postgres-k8s
 spec:
   ports:
     - nodePort: 30163
@@ -19,6 +20,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: employeetransfers-postgres-k8s
+  namespace: default
+  labels:
+    app: employeetransfers-postgres-k8s
 spec:
   selector:
     matchLabels:
@@ -31,27 +35,76 @@ spec:
     spec:
       containers:
         - name: employeetransfers-postgres-k8s
-          image: kutalamohanprasad/employee-transfers-0.0.1:latest
+          image: kutalamohanprasad/employee-transfers:0.0.1
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-          env:   # Setting Enviornmental Variables
-            - name: DB_HOST   # Setting Database host address from configMap
+              name: http
+              protocol: TCP
+          env:
+            # Database Configuration from ConfigMap
+            - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-conf  # name of configMap
+                  name: postgres-configmap
                   key: host
-            - name: DB_NAME  # Setting Database name from configMap
+            - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-conf
+                  name: postgres-configmap
                   key: name
-            - name: POSTGRES_USER  # Setting Database username from Secret
+            # Database Credentials from Secret
+            - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-cred # Secret Name
+                  name: postgres-cred
                   key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD # Setting Database password from Secret
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-credentials
+                  name: postgres-cred
                   key: POSTGRES_PASSWORD
+            # Spring Boot Configuration
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres17:5432/employee_db"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cred
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-cred
+                  key: POSTGRES_PASSWORD
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "validate"
+            - name: SPRING_JPA_SHOW_SQL
+              value: "false"
+          # Liveness Probe - Check if application is alive
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # Readiness Probe - Check if application is ready to accept traffic
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # Resource Limits
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+

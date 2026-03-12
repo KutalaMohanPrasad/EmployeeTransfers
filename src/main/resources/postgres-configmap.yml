@@ -1,8 +1,11 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config
+  name: postgres-configmap
   namespace: default
+  labels:
+    app: employeetransfers-postgres-k8s
 data:
-  host: postgres
-  name: postgres
+  host: postgres17
+  name: employee_db
+
