@@ -43,8 +43,10 @@ kubectl apply -f deployment.yml
 kubectl get pods
 kubectl logs <pod-name>
 # for detail logs
-kubectl describe pod <pod-name> 
-# once application is ready, access the application at http://localhost:8080/swagger-ui.html
+kubectl describe pod <pod-name>
+# once application is ready, 
+kubectl port-forward service/employeetransfers-postgres-k8s 8080:8080
+# access the application at http://localhost:8080/swagger-ui.html
 
 # Delete everything (pods, services, deployments)
 kubectl delete all --all
